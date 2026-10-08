@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>JJTECH_73 Catálogo</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="img/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: intro con logo → header fijo → chips de categoría → grilla 2/3/4 col → carrito lateral con pedido por WhatsApp */
+:root{
+  --bg:#05070d; --surface:#0c111c; --line:#1b2436; --fg:#eef1f7; --muted:#8b95ab;
+  --gold:#e8b54a; --gold-2:#c98d25; --blue:#2f7bff; --wa:#25d366;
+  --display:"Saira Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* INTRO */
+#intro{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,#0b1a3a 0%,var(--bg) 62%);transition:opacity .6s ease,visibility .6s}
+#intro.out{opacity:0;visibility:hidden}
+#intro .ring{position:absolute;width:min(78vw,380px);aspect-ratio:1;border-radius:50%;border:2px solid var(--blue);box-shadow:0 0 40px var(--blue),inset 0 0 30px rgba(47,123,255,.4);animation:pulse 1.6s ease-out both}
+#intro img{width:min(72vw,340px);border-radius:50%;animation:pop 1.1s cubic-bezier(.2,.9,.25,1.2) both}
+#intro .tag{position:absolute;bottom:14%;font-family:var(--display);letter-spacing:.3em;color:var(--gold);font-size:13px;text-transform:uppercase;animation:fade .6s .9s both}
+@keyframes pop{0%{transform:scale(.4) rotate(-12deg);opacity:0;filter:brightness(3)}100%{transform:none;opacity:1;filter:none}}
+@keyframes pulse{0%{transform:scale(.3);opacity:0}60%{opacity:1}100%{transform:scale(1.12);opacity:0}}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* HEADER */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:rgba(5,7,13,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.bar img{width:42px;height:42px;border-radius:50%}
+.brand{font-family:var(--display);font-weight:800;font-size:24px;letter-spacing:.02em;font-style:italic;line-height:1}
+.brand span{color:var(--gold)}
+.cartbtn{margin-left:auto;position:relative;display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:600}
+.cartbtn b{min-width:20px;height:20px;border-radius:10px;background:var(--gold);color:#120c00;font-size:12px;display:grid;place-items:center;padding:0 5px}
+
+main{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:18px 60px}
+.hero{display:flex;flex-direction:column;gap:6px;padding-block:6px 16px}
+.hero h1{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,52px);line-height:.95;text-transform:uppercase;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.trust{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.trust i{font-style:normal;color:var(--blue)}
+
+.search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;margin-block:6px 12px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.chips button{flex:none;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-weight:600;font-size:14px;transition:all .2s}
+.chips button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#120c00}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:980px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;text-align:left;transition:transform .2s,border-color .2s;animation:fade .4s both}
+.card:hover{transform:translateY(-3px);border-color:var(--gold-2)}
+.thumb{aspect-ratio:1;max-width:100%;display:grid;place-items:center;position:relative;background:radial-gradient(circle at 50% 40%,var(--c1),#070a12 75%)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.price.ask{font-size:16px;letter-spacing:.04em}
+.thumb svg{width:44%;height:auto;color:var(--fg);opacity:.9}
+.badge{position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border-radius:6px;background:var(--gold);color:#120c00}
+.info{padding:10px 12px 12px;display:flex;flex-direction:column;gap:2px;flex:1}
+.cat{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+.name{font-weight:600;line-height:1.25;padding:0}
+.row{margin-top:auto;padding-top:8px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.price{font-family:var(--display);font-weight:800;font-size:21px;color:var(--gold);font-variant-numeric:tabular-nums}
+.add{width:34px;height:34px;border-radius:10px;background:var(--blue);color:#fff;font-size:20px;line-height:1;display:grid;place-items:center}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
+
+/* MODAL + CART */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20;opacity:0;visibility:hidden;transition:.25s}
+.scrim.on{opacity:1;visibility:visible}
+.sheet{position:fixed;z-index:21;background:var(--surface);border:1px solid var(--line);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+#detail{left:50%;bottom:0;width:min(100%,520px);border-radius:18px 18px 0 0;transform:translate(-50%,105%);padding:0 0 calc(16px + env(safe-area-inset-bottom,0px))}
+#detail.on{transform:translate(-50%,0)}
+#detail .thumb{aspect-ratio:4/3;border-radius:18px 18px 0 0}
+#detail .thumb svg{width:26%}
+.dbody{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.dbody h2{margin:0;font-size:22px;line-height:1.2}
+.dbody p{margin:0;color:var(--muted)}
+.sizes{display:flex;gap:6px;flex-wrap:wrap}
+.sizes button{padding:6px 12px;border-radius:8px;border:1px solid var(--line);font-weight:600;font-variant-numeric:tabular-nums}
+.sizes button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+.cta{width:100%;padding:14px;border-radius:12px;background:var(--gold);color:#120c00;font-weight:700;font-size:16px}
+.cta.wa{background:var(--wa);color:#04130a}
+#cart{top:0;right:0;height:100%;width:min(100%,400px);transform:translateX(105%);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+#cart.on{transform:none}
+.chead{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--line)}
+.chead h3{margin:0;font-family:var(--display);font-size:24px;text-transform:uppercase}
+.x{font-size:26px;line-height:1;color:var(--muted);padding:4px 8px}
+.items{flex:1;overflow:auto;padding:8px 16px;display:flex;flex-direction:column;gap:10px}
+.it{display:flex;gap:10px;align-items:center;padding-block:8px;border-bottom:1px solid var(--line)}
+.it .thumb{width:56px;flex:none;border-radius:10px}
+.it .thumb svg{width:50%}
+.it .meta{flex:1;min-width:0}
+.it .meta div:first-child{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it small{color:var(--muted)}
+.qty{display:flex;align-items:center;gap:8px;font-variant-numeric:tabular-nums}
+.qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line)}
+.cfoot{padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.total{display:flex;justify-content:space-between;font-size:17px}
+.total b{font-family:var(--display);font-size:26px;color:var(--gold)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);opacity:0;background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;z-index:30;transition:.25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+footer{text-align:center;color:var(--muted);font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding-block:10px 30px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="intro" aria-hidden="true"><div class="ring"></div><img src="img/logo.jpg" alt=""><div class="tag">Calidad · Confianza · Garantía</div></div>
+
+<header><div class="bar">
+  <img src="img/logo.jpg" alt="JJTECH_73">
+  <div class="brand">JJ<span>TECH</span>_73</div>
+  <button class="cartbtn" id="openCart" aria-label="Abrir carrito">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l-1 13H7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+    <b id="count">0</b>
+  </button>
+</div></header>
+
+<main>
+  <section class="hero">
+    <h1>Boutique <em>JJTECH</em></h1>
+    <p style="margin:0;color:var(--muted);font-size:16px">Relojes, tenis y tecnología. Pide directo por WhatsApp.</p>
+    <div class="trust"><span><i>★</i> Calidad</span><span><i>★</i> Confianza</span><span><i>★</i> Garantía</span></div>
+  </section>
+  <input id="q" class="search" type="search" placeholder="Buscar producto…" aria-label="Buscar producto">
+  <nav class="chips" id="chips" aria-label="Categorías"></nav>
+  <section class="grid" id="grid"></section>
+</main>
+<footer>Boutique JJTECH · 1-954-309-3806 · Maqueta de diseño</footer>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="detail" role="dialog" aria-modal="true" aria-label="Detalle del producto"></div>
+<aside class="sheet" id="cart" role="dialog" aria-modal="true" aria-label="Carrito">
+  <div class="chead"><h3>Tu pedido</h3><button class="x" data-close aria-label="Cerrar">×</button></div>
+  <div class="items" id="items"></div>
+  <div class="cfoot">
+    <div class="total"><span>Total</span><b id="total">$0</b></div>
+    <a class="cta wa" id="checkout" target="_blank" rel="noopener" style="text-align:center;text-decoration:none;display:block">Pedir por WhatsApp</a>
+  </div>
+</aside>
+<div class="toast" id="toast">Agregado al pedido</div>
+
+<script>
+const WA="19543093806";
+const ICONS={
+ relojes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="8" y="1.5" width="8" height="5" rx="1"/><rect x="8" y="17.5" width="8" height="5" rx="1"/><circle cx="12" cy="12" r="6"/><path d="M12 9v3l2 1.5"/></svg>',
+ tenis:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 16.5V12l4-1 3-4 3 2 1 3 6 1.5c2 .5 3 2 3 4v1H2z"/><path d="M2 19h20"/><path d="M8 12l1.5 1.5M10.5 11l1.5 1.5"/></svg>',
+ tecnologia:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="6" y="2" width="12" height="20" rx="2.5"/><circle cx="9.5" cy="5.5" r="1"/><circle cx="12.5" cy="5.5" r="1"/><path d="M10 19h4"/></svg>',
+ accesorios:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>'
+};
+const CATS=[["todos","Todo"],["relojes","Relojes"],["tenis","Tenis"],["tecnologia","Tecnología"],["accesorios","Accesorios"]];
+const COL={relojes:"#3a2a0c",tenis:"#0d2550",tecnologia:"#1d2233",accesorios:"#2a1430"};
+const P=[
+ {id:1,c:"relojes",n:"Rolex Datejust 36mm",p:null,b:"Galería Rolex",img:"img/datejust-36.jpg",d:"Dorado, esfera azul con brillantes, brazalete jubilee. Con caja y papeles.",s:null},
+ {id:2,c:"relojes",n:"Rolex Submariner 41mm",p:null,b:"Galería Rolex",img:"img/submariner-41.jpg",d:"Acero y oro, esfera negra, bisel giratorio. Con caja y papeles.",s:null},
+ {id:3,c:"relojes",n:"TAG Heuer Fernando Alonso 44mm · Naranja",p:null,b:"F1",img:"img/alonso-naranja.jpg",d:"3 piñones, bisel giratorio, funcionamiento impecable. Listo para la entrega.",s:null},
+ {id:13,c:"relojes",n:"TAG Heuer Fernando Alonso 44mm · Rojo",p:null,b:"F1",img:"img/alonso-rojo.jpg",d:"3 piñones, bisel giratorio, funcionamiento impecable. Listo para la entrega.",s:null},
+ {id:14,c:"relojes",n:"TAG Heuer Fernando Alonso 44mm · Blanco",p:null,b:"F1",img:"img/alonso-blanco.jpg",d:"3 piñones, bisel giratorio, brazalete de acero. Listo para la entrega.",s:null},
+ {id:4,c:"tenis",n:"Jordan 1 High Royal",p:220,b:"Top",d:"Blanco, negro y azul royal. Piel.",s:[7,8,9,10,11]},
+ {id:5,c:"tenis",n:"Dunk Low Panda",p:160,d:"Blanco y negro, el clásico de diario.",s:[7,8,9,10,11,12]},
+ {id:6,c:"tenis",n:"Air Force 1 Blancos",p:130,d:"Triple blanco, piel.",s:[7,8,9,10,11]},
+ {id:7,c:"tecnologia",n:"iPhone 15 Pro Max 256GB",p:950,b:"Garantía",d:"Titanio natural, desbloqueado, batería 100%.",s:null},
+ {id:8,c:"tecnologia",n:"AirPods Pro 2",p:190,d:"Cancelación de ruido, estuche USB-C.",s:null},
+ {id:9,c:"tecnologia",n:"Apple Watch Series 9",p:330,d:"45mm, GPS, correa deportiva.",s:null},
+ {id:10,c:"accesorios",n:"Bolso Crossbody Negro",p:140,d:"Piel sintética, correa ajustable.",s:null},
+ {id:11,c:"accesorios",n:"Cargador MagSafe",p:45,d:"Carga inalámbrica 15W.",s:null},
+ {id:12,c:"accesorios",n:"Correa de Piel para Reloj",p:35,b:"Nuevo",d:"Piel café, hebilla de acero, 20mm.",s:null}
+];
+const $=s=>document.querySelector(s), money=n=>n==null?"Consultar":"$"+n.toLocaleString("en-US");
+let cat="todos",q="",cart=[];
+const thumb=(c,img)=>`<div class="thumb" style="--c1:${COL[c]}">${img?`<img src="${img}" alt="" loading="lazy">`:ICONS[c]}</div>`;
+
+function renderChips(){$("#chips").innerHTML=CATS.map(([k,l])=>`<button aria-pressed="${k===cat}" data-cat="${k}">${l}</button>`).join("")}
+function renderGrid(){
+  const list=P.filter(x=>(cat==="todos"||x.c===cat)&&x.n.toLowerCase().includes(q));
+  $("#grid").innerHTML=list.length?list.map((x,i)=>`<article class="card" style="animation-delay:${i*40}ms">
+    <button data-open="${x.id}" style="text-align:left;display:block">${thumb(x.c,x.img).replace('</div>',(x.b?`<span class="badge">${x.b}</span>`:"")+'</div>')}</button>
+    <div class="info"><span class="cat">${CATS.find(c=>c[0]===x.c)[1]}</span><button class="name" data-open="${x.id}" style="text-align:left">${x.n}</button>
+    <div class="row"><span class="price${x.p==null?" ask":""}">${money(x.p)}</span><button class="add" data-add="${x.id}" aria-label="Agregar ${x.n}">+</button></div></div></article>`).join("")
+    :`<p class="empty">No encontramos "${q}". Prueba otra búsqueda.</p>`;
+}
+function openDetail(id){
+  const x=P.find(p=>p.id==id);let size=x.s?x.s[2]:null;
+  const d=$("#detail");
+  d.innerHTML=`${thumb(x.c,x.img)}<div class="dbody"><span class="cat">${CATS.find(c=>c[0]===x.c)[1]}</span><h2>${x.n}</h2>
+   <span class="price${x.p==null?" ask":""}">${money(x.p)}</span><p>${x.d}</p>
+   ${x.s?`<div class="sizes" id="sz">${x.s.map(s=>`<button aria-pressed="${s===size}" data-s="${s}">US ${s}</button>`).join("")}</div>`:""}
+   <button class="cta" id="dAdd">Agregar al pedido</button></div>`;
+  d.querySelector("#sz")?.addEventListener("click",e=>{const b=e.target.closest("[data-s]");if(!b)return;size=+b.dataset.s;d.querySelectorAll("[data-s]").forEach(el=>el.setAttribute("aria-pressed",el===b))});
+  d.querySelector("#dAdd").onclick=()=>{add(x.id,size);close()};
+  show(d);
+}
+function add(id,size=null){
+  const x=P.find(p=>p.id==id);if(size===null&&x.s)size=x.s[2];
+  const key=id+"-"+size,f=cart.find(i=>i.key===key);
+  f?f.q++:cart.push({key,id,size,q:1});renderCart();
+  const t=$("#toast");t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("on"),1400);
+}
+function renderCart(){
+  $("#count").textContent=cart.reduce((a,i)=>a+i.q,0);
+  let tot=0;
+  $("#items").innerHTML=cart.length?cart.map(i=>{const x=P.find(p=>p.id===i.id);tot+=(x.p||0)*i.q;
+    return `<div class="it">${thumb(x.c,x.img)}<div class="meta"><div>${x.n}</div><small>${i.size?"Talla US "+i.size+" · ":""}${money(x.p)}</small></div>
+    <div class="qty"><button data-dec="${i.key}" aria-label="Quitar uno">−</button>${i.q}<button data-inc="${i.key}" aria-label="Agregar uno">+</button></div></div>`}).join("")
+    :`<p class="empty">Tu pedido está vacío.<br>Toca + en cualquier producto.</p>`;
+  $("#total").textContent=tot?money(tot):(cart.length?"Consultar":"$0");
+  const lines=cart.map(i=>{const x=P.find(p=>p.id===i.id);return `• ${i.q}x ${x.n}${i.size?" (US "+i.size+")":""} — ${x.p==null?"precio a consultar":money(x.p*i.q)}`});
+  const msg=`Hola JJTECH_73, quiero hacer este pedido:\n${lines.join("\n")}\nTotal: ${tot?money(tot)+(cart.some(i=>P.find(p=>p.id===i.id).p==null)?" + precios a consultar":""):"a consultar"}`;
+    const a=$("#checkout");a.href=cart.length?`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`:"#";a.style.opacity=cart.length?1:.5;a.onclick=e=>{if(!cart.length)e.preventDefault()};
+}
+function show(el){$("#scrim").classList.add("on");el.classList.add("on")}
+function close(){document.querySelectorAll(".sheet.on,.scrim.on").forEach(e=>e.classList.remove("on"))}
+
+$("#chips").onclick=e=>{const b=e.target.closest("[data-cat]");if(!b)return;cat=b.dataset.cat;renderChips();renderGrid()};
+$("#q").oninput=e=>{q=e.target.value.trim().toLowerCase();renderGrid()};
+$("#grid").onclick=e=>{const a=e.target.closest("[data-add]"),o=e.target.closest("[data-open]");if(a)add(+a.dataset.add);else if(o)openDetail(o.dataset.open)};
+$("#items").onclick=e=>{const k=(e.target.closest("[data-inc]")||{}).dataset?.inc,d=(e.target.closest("[data-dec]")||{}).dataset?.dec;
+  if(k)cart.find(i=>i.key===k).q++;if(d){const i=cart.find(i=>i.key===d);i.q--;if(!i.q)cart=cart.filter(x=>x!==i)}renderCart()};
+$("#openCart").onclick=()=>show($("#cart"));
+$("#scrim").onclick=close;document.querySelector("[data-close]").onclick=close;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
+renderChips();renderGrid();renderCart();
+setTimeout(()=>$("#intro").classList.add("out"),2200);
+$("#intro").onclick=()=>$("#intro").classList.add("out");
+</script>
+
+</body>
+</html>
