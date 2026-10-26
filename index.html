@@ -81,10 +81,9 @@ h2{text-align:center;font-family:var(--display);font-weight:800;font-size:28px;m
 h2 em{font-style:normal;color:var(--gold-2)}
 
 /* CATEGORÍAS */
-.marquee{overflow:hidden;touch-action:pan-y}
-.track{display:flex;gap:10px;width:max-content;animation:move 26s linear infinite}
-.marquee:hover .track,.marquee:active .track{animation-play-state:paused}
-@keyframes move{to{transform:translateX(-50%)}}
+.marquee{overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.marquee::-webkit-scrollbar{display:none}
+.track{display:flex;gap:10px;width:max-content;padding-inline:5px}
 .cat{flex:none;width:156px;height:190px;background:#090909;border-radius:12px;overflow:hidden;color:#fff;display:flex;flex-direction:column;align-items:center;text-align:center;transition:transform .25s,box-shadow .25s}
 .cat:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(224,161,0,.35)}
 .cat img{width:100%;height:118px;object-fit:cover;display:block}
@@ -393,6 +392,21 @@ function burst(x,y,n=30){for(let i=0;i<n;i++){const a=Math.random()*6.28,v=2+Mat
  if(!running){running=true;(function f(){fc.clearRect(0,0,fx.width,fx.height);BURST=BURST.filter(p=>p.l>0);for(const p of BURST){p.x+=p.vx;p.y+=p.vy;p.vy+=.18;p.l-=.016;fc.globalAlpha=Math.max(p.l,0);fc.fillStyle=p.c;if(p.sq)fc.fillRect(p.x,p.y,p.r*1.6,p.r);else{fc.beginPath();fc.arc(p.x,p.y,p.r,0,6.28);fc.fill()}}fc.globalAlpha=1;if(BURST.length)requestAnimationFrame(f);else running=false})()}}
 
 renderChips();renderGrid();renderCart();
+
+// cinta de categorías: se mueve sola hacia la izquierda, se detiene al tocarla y se puede deslizar
+(function(){const m=document.querySelector(".marquee"),tr=$("#track");let pos=0,paused=false,last=0,resume;
+const half=()=>tr.scrollWidth/2;
+function tick(t){const dt=Math.min(t-last,50)/1000;last=t;if(!paused){pos+=48*dt;const h=half();if(h&&pos>=h)pos-=h;m.scrollLeft=pos}requestAnimationFrame(tick)}
+const pause=()=>{paused=true;clearTimeout(resume)};
+const play=()=>{clearTimeout(resume);resume=setTimeout(()=>{pos=m.scrollLeft;paused=false},1800)};
+m.addEventListener("touchstart",pause,{passive:true});
+["touchend","touchcancel"].forEach(ev=>m.addEventListener(ev,play,{passive:true}));
+m.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")pause()});
+m.addEventListener("pointerleave",e=>{if(e.pointerType==="mouse")play()});
+m.addEventListener("wheel",()=>{pause();play()},{passive:true});
+m.addEventListener("scroll",()=>{if(!paused)return;const h=half();if(m.scrollLeft>=h)m.scrollLeft-=h;else if(m.scrollLeft<=0)m.scrollLeft+=h-1},{passive:true});
+requestAnimationFrame(t=>{last=t;tick(t)})})();
+
 
 // intro word
 "BOUTIQUE JJTECH".split("").forEach((c,i)=>{const sp=document.createElement("span");sp.className="goldtxt";sp.textContent=c===" "?" ":c;sp.style.animationDelay=(1.1+i*.06)+"s";$("#word").appendChild(sp)});
