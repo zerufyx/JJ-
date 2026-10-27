@@ -62,6 +62,7 @@ textarea{min-height:90px;resize:vertical}
 .list{display:flex;flex-direction:column;gap:8px;padding-bottom:40px}
 .row{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px}
 .row.off{opacity:.55}
+.cph{width:68px;height:68px;border-radius:10px;flex:none;background:var(--panel-2);display:grid;place-items:center;font-size:11px;line-height:1.2;color:var(--muted);text-align:center;padding:4px}
 .row img{width:68px;height:68px;border-radius:10px;object-fit:cover;flex:none;background:var(--panel-2)}
 .row .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .row .info b{font-size:15px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -79,11 +80,11 @@ textarea{min-height:90px;resize:vertical}
 .settings{display:flex;flex-direction:column;gap:14px;padding-block:14px 40px;max-width:460px}
 
 /* EDITOR */
-#editor{position:fixed;inset:0;z-index:30;background:var(--bg);overflow:auto;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
-#editor .head{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
-#editor .head .wrap{display:flex;align-items:center;justify-content:space-between;padding-block:12px}
-#editor h2{margin:0;font-family:var(--display);font-size:26px;text-transform:uppercase}
-#editor form{display:flex;flex-direction:column;gap:16px;padding-block:16px}
+#editor,.sheetfull{position:fixed;inset:0;z-index:30;background:var(--bg);overflow:auto;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+#editor .head,.sheetfull .head{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+#editor .head .wrap,.sheetfull .head .wrap{display:flex;align-items:center;justify-content:space-between;padding-block:12px}
+#editor h2,.sheetfull h2{margin:0;font-family:var(--display);font-size:26px;text-transform:uppercase}
+#editor form,.sheetfull form{display:flex;flex-direction:column;gap:16px;padding-block:16px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .two>*{min-width:0}
 .checks{display:flex;gap:10px;flex-wrap:wrap}
@@ -131,6 +132,7 @@ textarea{min-height:90px;resize:vertical}
   <div class="wrap">
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-tab="prod">Productos</button>
+      <button role="tab" aria-selected="false" data-tab="cat">Categorías</button>
       <button role="tab" aria-selected="false" data-tab="set">Ajustes</button>
     </div>
 
@@ -139,6 +141,12 @@ textarea{min-height:90px;resize:vertical}
       <div class="bar"><button class="btn gold" id="newBtn">+ Nuevo producto</button><input id="search" type="search" placeholder="Buscar por nombre" aria-label="Buscar por nombre"></div>
       <div class="chips" id="chips"></div>
       <div class="list" id="list"></div>
+    </div>
+
+    <div id="tab-cat" hidden>
+      <div class="bar" style="padding-top:10px"><button class="btn gold" id="newCat">+ Nueva categoría</button></div>
+      <p style="color:var(--muted);margin:0 0 10px;font-size:14px">Las categorías salen en la cinta "Nuestras categorías", en los filtros y en el menú del catálogo.</p>
+      <div class="list" id="catList"></div>
     </div>
 
     <div id="tab-set" hidden>
@@ -165,9 +173,7 @@ textarea{min-height:90px;resize:vertical}
       </div>
       <label class="f">Nombre<input id="fName" type="text" maxlength="90" required placeholder="Ej: Reloj de Caballero Dorado 40mm"></label>
       <div class="two">
-        <label class="f">Categoría<select id="fCat">
-          <option value="relojes">Relojes</option><option value="calzado">Calzado</option><option value="tecnologia">Tecnología</option><option value="accesorios">Accesorios</option>
-        </select></label>
+        <label class="f">Categoría<select id="fCat"></select></label>
         <label class="f">Precio<small>Vacío = "Consultar"</small><input id="fPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Consultar"></label>
       </div>
       <div class="two">
@@ -188,6 +194,20 @@ textarea{min-height:90px;resize:vertical}
   <div class="foot"><div class="wrap"><button class="btn" id="edCancel" type="button">Cancelar</button><button class="btn gold" id="saveBtn" type="button">Guardar</button></div></div>
 </section>
 
+<section id="catEd" class="sheetfull" hidden aria-modal="true" role="dialog" aria-labelledby="ceTitle">
+  <div class="head"><div class="wrap"><h2 id="ceTitle">Nueva categoría</h2><button class="btn" id="ceClose" type="button">Cerrar</button></div></div>
+  <div class="wrap">
+    <form id="ceForm" novalidate>
+      <div><div style="margin-bottom:8px;font-weight:600">Foto de la tarjeta</div><div class="photos" id="cePhoto"></div><input id="ceFile" type="file" accept="image/*" hidden></div>
+      <label class="f">Nombre<input id="ceName" type="text" maxlength="40" required placeholder="Ej: Perfumes"></label>
+      <div class="checks"><label><input id="ceActive" type="checkbox" checked> Visible en el catálogo</label></div>
+      <button class="btn danger" id="ceDel" type="button" hidden>Borrar esta categoría</button>
+      <div class="msg" id="ceMsg" role="alert"></div>
+    </form>
+  </div>
+  <div class="foot"><div class="wrap"><button class="btn" id="ceCancel" type="button">Cancelar</button><button class="btn gold" id="ceSave" type="button">Guardar</button></div></div>
+</section>
+
 <div class="toast" id="toast" role="status"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -196,7 +216,8 @@ textarea{min-height:90px;resize:vertical}
 const $=s=>document.querySelector(s);
 const CFG=window.JJ_CONFIG||{};
 const BUCKET="jj-products";
-const CATS={relojes:"Relojes",calzado:"Calzado",tecnologia:"Tecnología",accesorios:"Accesorios"};
+const DEF_CATS=[{slug:"relojes",name:"Relojes",active:true},{slug:"calzado",name:"Calzado",active:true},{slug:"tecnologia",name:"Tecnología",active:true},{slug:"accesorios",name:"Accesorios",active:true}];
+let cats=[],CATS={},catTable=false,ced=null,cphoto=null;
 const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const money=n=>"$"+Number(n).toLocaleString("en-US",{maximumFractionDigits:2});
 let sb=null,items=[],fcat="todos",fq="",ed=null,photos=[],busy=false;
@@ -244,14 +265,14 @@ async function enter(){
   if(!user){show("#login");return}
   const {data,error}=await sb.from("jj_admins").select("user_id").eq("user_id",user.id).maybeSingle();
   if(error||!data){await sb.auth.signOut();show("#login");$("#loginMsg").textContent="Esta cuenta no tiene permiso de administrador.";return}
-  show("#app");loadProducts();loadSettings();
+  show("#app");await loadCats();loadProducts();loadSettings();
 }
 $("#logout").onclick=async()=>{await sb.auth.signOut();show("#login")};
 
 // ---------- pestañas ----------
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-tab]").forEach(x=>x.setAttribute("aria-selected",x===b));
-  $("#tab-prod").hidden=b.dataset.tab!=="prod";$("#tab-set").hidden=b.dataset.tab!=="set";
+  ["prod","cat","set"].forEach(t=>$("#tab-"+t).hidden=b.dataset.tab!==t);
 });
 
 // ---------- productos ----------
@@ -259,7 +280,7 @@ async function loadProducts(){
   $("#list").innerHTML=`<div class="empty">Cargando…</div>`;
   const {data,error}=await sb.from("jj_products").select("*").order("sort",{ascending:true}).order("created_at",{ascending:false});
   if(error){$("#list").innerHTML=`<div class="empty"><b>No se pudieron cargar los productos.</b>${esc(error.message)}<br>¿Corriste el archivo jjtech73.sql en Supabase?</div>`;return}
-  items=data||[];render();
+  items=data||[];render();renderCatList();
 }
 function render(){
   const vis=items.filter(x=>x.active).length,sold=items.filter(x=>x.sold).length;
@@ -328,7 +349,8 @@ $("#fileIn").onchange=async e=>{
 // ---------- editor ----------
 function openEditor(x){
   ed=x||null;$("#edTitle").textContent=x?"Editar producto":"Nuevo producto";$("#edMsg").textContent="";
-  $("#fName").value=x?.name||"";$("#fCat").value=x?.category||(fcat!=="todos"?fcat:"relojes");$("#fPrice").value=x?.price??"";
+  $("#fName").value=x?.name||"";const fc=$("#fCat");fc.innerHTML=cats.map(c=>`<option value="${esc(c.slug)}">${esc(c.name)}${c.active?"":" (oculta)"}</option>`).join("");
+  if(x&&!cats.some(c=>c.slug===x.category))fc.add(new Option(x.category,x.category));fc.value=x?.category||(fcat!=="todos"?fcat:(cats[0]?.slug||""));$("#fPrice").value=x?.price??"";
   const bs=$("#fBadge");if(x?.badge&&![...bs.options].some(o=>o.value===x.badge)){bs.add(new Option(x.badge,x.badge))}bs.value=x?.badge||"";
   $("#fSizes").value=x?.sizes||"";$("#fDesc").value=x?.description||"";$("#fActive").checked=x?x.active:true;$("#fSold").checked=x?x.sold:false;
   photos=(x?.images||[]).map(u=>({url:u}));renderPhotos();
@@ -385,6 +407,78 @@ async function importDemo(){
     toast("Listo, productos cargados");await loadProducts();
   }catch(err){toast("No se pudo cargar: "+(err.message||err),true);b.disabled=false;b.textContent=`Cargar los ${DEMO.length} productos de la maqueta`}
 }
+
+
+// ---------- categorías ----------
+const slugify=t=>t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"categoria";
+async function loadCats(){
+  const {data,error}=await sb.from("jj_categories").select("*").order("sort",{ascending:true});
+  catTable=!error;cats=error?DEF_CATS.map((c,i)=>({...c,image:"",sort:i*10})):(data||[]);
+  CATS=Object.fromEntries(cats.map(c=>[c.slug,c.name]));renderCatList();
+}
+function renderCatList(){
+  if(!catTable){$("#catList").innerHTML=`<div class="empty"><b>Falta un paso en Supabase.</b>Corre el archivo jjtech73_categorias.sql en el SQL Editor y recarga esta página.</div>`;$("#newCat").disabled=true;return}
+  $("#newCat").disabled=false;
+  $("#catList").innerHTML=cats.length?cats.map((c,i)=>{const n=items.filter(x=>x.category===c.slug).length;return `<div class="row${c.active?"":" off"}">
+    ${c.image?`<img src="${esc(c.image)}" alt="" loading="lazy">`:`<div class="cph">Foto de la maqueta</div>`}
+    <div class="info"><b>${esc(c.name)}</b><small>${n} producto${n===1?"":"s"}</small>
+      <div class="flags"><button data-cf="${c.id}" data-f="active" aria-pressed="${c.active}">${c.active?"Visible":"Oculta"}</button></div></div>
+    <div class="ops"><button data-ce="${c.id}">Editar</button><div class="mv"><button data-cm="-1" data-id="${c.id}" aria-label="Subir" ${i===0?"disabled":""}>↑</button><button data-cm="1" data-id="${c.id}" aria-label="Bajar" ${i===cats.length-1?"disabled":""}>↓</button></div></div>
+  </div>`}).join(""):`<div class="empty"><b>No hay categorías.</b>Crea la primera.</div>`;
+}
+$("#catList").onclick=async e=>{
+  const f=e.target.closest("[data-cf]"),mv=e.target.closest("[data-cm]"),edb=e.target.closest("[data-ce]");
+  if(edb){openCatEd(cats.find(c=>c.id==edb.dataset.ce));return}
+  if(busy)return;
+  if(f){const c=cats.find(x=>x.id==f.dataset.cf),v=!c.active;busy=true;const {error}=await sb.from("jj_categories").update({active:v}).eq("id",c.id);busy=false;
+    if(error){toast("No se pudo guardar: "+error.message,true);return}c.active=v;renderCatList();toast(v?"Categoría visible":"Categoría oculta");return}
+  if(mv){const i=cats.findIndex(c=>c.id==mv.dataset.id),j=i+(+mv.dataset.cm);if(j<0||j>=cats.length)return;
+    const order=cats.slice();[order[i],order[j]]=[order[j],order[i]];busy=true;
+    const res=await Promise.all(order.map((c,k)=>c.sort!==k*10?sb.from("jj_categories").update({sort:k*10}).eq("id",c.id).then(r=>{if(!r.error)c.sort=k*10;return r}):Promise.resolve({})));busy=false;
+    if(res.some(r=>r.error)){toast("No se pudo cambiar el orden.",true);loadCats();return}cats=order;renderCatList()}
+};
+function renderCatPhoto(){
+  $("#cePhoto").innerHTML=(cphoto?`<div class="ph"><img src="${esc(cphoto.preview||cphoto.url)}" alt=""><div class="pops"><span></span><button type="button" id="ceRm" aria-label="Quitar foto">×</button><span></span></div></div>`:"")
+    +`<label class="addph" for="ceFile"><b>+</b>${cphoto?"Cambiar foto":(ced&&!ced.image&&ced.slug in {relojes:1,calzado:1,tecnologia:1,accesorios:1}?"Cambiar foto (ahora usa la de la maqueta)":"Agregar foto")}</label>`;
+  const rm=$("#ceRm");if(rm)rm.onclick=()=>{if(cphoto?.preview)URL.revokeObjectURL(cphoto.preview);cphoto=null;renderCatPhoto()};
+}
+$("#ceFile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;
+  try{const b=await compress(f,900,.85);if(cphoto?.preview)URL.revokeObjectURL(cphoto.preview);cphoto={blob:b,preview:URL.createObjectURL(b)};renderCatPhoto()}catch{toast("No se pudo leer la foto. Usa JPG o PNG.",true)}};
+function openCatEd(c){
+  ced=c||null;$("#ceTitle").textContent=c?"Editar categoría":"Nueva categoría";$("#ceMsg").textContent="";
+  $("#ceName").value=c?.name||"";$("#ceActive").checked=c?c.active:true;cphoto=c?.image?{url:c.image}:null;renderCatPhoto();
+  $("#ceDel").hidden=!c;$("#catEd").hidden=false;document.body.style.overflow="hidden";
+}
+function closeCatEd(){if(cphoto?.preview)URL.revokeObjectURL(cphoto.preview);$("#catEd").hidden=true;document.body.style.overflow="";ced=null}
+$("#newCat").onclick=()=>openCatEd(null);$("#ceClose").onclick=closeCatEd;$("#ceCancel").onclick=closeCatEd;
+$("#ceSave").onclick=async()=>{
+  if(busy)return;const m=$("#ceMsg");m.textContent="";const name=$("#ceName").value.trim();
+  if(!name){m.textContent="Escribe el nombre de la categoría.";return}
+  if(cats.some(c=>c!==ced&&c.name.toLowerCase()===name.toLowerCase())){m.textContent="Ya existe una categoría con ese nombre.";return}
+  busy=true;const btn=$("#ceSave");btn.disabled=true;btn.textContent="Guardando…";
+  try{
+    let image=cphoto?(cphoto.url||""):"";
+    if(cphoto?.blob){btn.textContent="Subiendo foto…";image=await upload(cphoto.blob);cphoto.url=image;delete cphoto.blob}
+    const row={name,image,active:$("#ceActive").checked};let res;
+    if(ced){res=await sb.from("jj_categories").update(row).eq("id",ced.id)}
+    else{let sl=slugify(name),k=2;while(cats.some(c=>c.slug===sl))sl=slugify(name)+"-"+k++;
+      res=await sb.from("jj_categories").insert({...row,slug:sl,sort:cats.length?Math.max(...cats.map(c=>c.sort))+10:0})}
+    if(res.error)throw res.error;
+    if(ced&&ced.image&&ced.image!==image){const pth=pathOf(ced.image);if(pth)sb.storage.from(BUCKET).remove([pth])}
+    const was=!!ced;closeCatEd();await loadCats();render();toast(was?"Categoría guardada":"Categoría creada");
+  }catch(err){m.textContent="No se pudo guardar: "+(err.message||err)}
+  finally{busy=false;btn.disabled=false;btn.textContent="Guardar"}
+};
+$("#ceDel").onclick=async()=>{
+  if(!ced||busy)return;const n=items.filter(x=>x.category===ced.slug).length;
+  if(n){$("#ceMsg").textContent=`Esta categoría tiene ${n} producto${n===1?"":"s"}. Muévelos a otra categoría o bórralos primero.`;return}
+  if(!confirm(`¿Borrar la categoría "${ced.name}"?`))return;
+  busy=true;const {error}=await sb.from("jj_categories").delete().eq("id",ced.id);busy=false;
+  if(error){$("#ceMsg").textContent="No se pudo borrar: "+error.message;return}
+  const pth=ced.image&&pathOf(ced.image);if(pth)sb.storage.from(BUCKET).remove([pth]);
+  closeCatEd();await loadCats();render();toast("Categoría borrada");
+};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#catEd").hidden)closeCatEd()});
 
 // ---------- ajustes ----------
 async function loadSettings(){

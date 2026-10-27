@@ -274,10 +274,7 @@ header,main,footer{position:relative;z-index:1}
 <aside class="sheet" id="menu" role="dialog" aria-modal="true" aria-label="Menú">
   <div class="chead"><span class="brand goldtxt">JJTECH_73</span><button class="x" data-close aria-label="Cerrar">×</button></div>
   <button class="lnk" data-go="todos">Todos los productos</button>
-  <button class="lnk" data-go="relojes">Relojes</button>
-  <button class="lnk" data-go="calzado">Calzado</button>
-  <button class="lnk" data-go="tecnologia">Tecnología</button>
-  <button class="lnk" data-go="accesorios">Accesorios</button>
+  <div id="menuCats"></div>
   <a href="#nosotros" data-close>Nosotros</a>
   <a href="https://instagram.com/jjtech_73" target="_blank" rel="noopener">Instagram</a>
   <a href="https://www.tiktok.com/@jjtech_73" target="_blank" rel="noopener">TikTok</a>
@@ -307,7 +304,7 @@ function applyLinks(){document.querySelectorAll("[data-wa]").forEach(a=>{a.href=
 applyLinks();
 try{const l=document.createElement("link");l.rel="icon";l.href=IMG.logo;document.head.appendChild(l)}catch(e){}
 
-const CATS=[["relojes","Relojes","cat-relojes"],["calzado","Calzado","cat-calzado"],["tecnologia","Tecnología","cat-tecnologia"],["accesorios","Accesorios","cat-accesorios"]];
+let CATS=[["relojes","Relojes",IMG["cat-relojes"]],["calzado","Calzado",IMG["cat-calzado"]],["tecnologia","Tecnología",IMG["cat-tecnologia"]],["accesorios","Accesorios",IMG["cat-accesorios"]]];
 const DEMO=[
  {id:1,c:"relojes",n:"Reloj de Caballero Dorado 36mm",b:"Exclusivo",img:"datejust",d:"Dorado, esfera azul con brillantes, brazalete tipo jubileo. Incluye caja."},
  {id:2,c:"relojes",n:"Reloj de Caballero Bicolor 41mm",b:"Exclusivo",img:"submariner",d:"Acero y oro, esfera negra, bisel giratorio. Incluye caja."},
@@ -327,8 +324,12 @@ let P=DEMO.map(x=>({...x,price:null,sold:false,sizes:x.sizes||[],imgs:[IMG[x.img
 let cat="todos",q="",cart=[],LOADING=false,LOADERR=false;
 
 // categorías (cinta)
-const cards=CATS.map(([k,l,im])=>`<button class="cat" data-go="${k}"><img src="${IMG[im]}" alt=""><b>${l.toUpperCase()}</b><span>VER CATÁLOGO →</span></button>`).join("");
-$("#track").innerHTML=cards+cards;
+function renderCats(){
+  const cards=CATS.map(([k,l,im])=>`<button class="cat" data-go="${k}"><img src="${im}" alt=""><b>${l.toUpperCase()}</b><span>VER CATÁLOGO →</span></button>`).join("");
+  $("#track").innerHTML=cards+cards;
+  $("#menuCats").innerHTML=CATS.map(([k,l])=>`<button class="lnk" data-go="${k}">${l}</button>`).join("");
+}
+renderCats();
 
 function renderChips(){const all=[["todos","Todo"],...CATS.map(c=>[c[0],c[1]])];$("#chips").innerHTML=all.map(([k,l])=>`<button aria-pressed="${k===cat}" data-cat="${k}">${l}</button>`).join("")}
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
@@ -424,6 +425,8 @@ if(DB){
   LOADING=true;renderGrid();
   rest("jj_settings?select=whatsapp,instagram,tiktok&id=eq.1").then(r=>{const st=r[0];if(!st)return;
     if(st.whatsapp)WA=String(st.whatsapp).replace(/\D/g,"");if(st.instagram)IG=st.instagram;if(st.tiktok)TT=st.tiktok;applyLinks();renderCart();renderGrid()}).catch(()=>{});
+  rest("jj_categories?select=slug,name,image&active=eq.true&order=sort.asc").then(rows=>{if(!rows.length)return;
+    CATS=rows.map(r=>[clean(r.slug),clean(r.name),r.image||IMG["cat-"+r.slug]||IMG.logo]);if(cat!=="todos"&&!CATS.some(c=>c[0]===cat))cat="todos";renderCats();renderChips();renderGrid()}).catch(()=>{});
   rest("jj_products?select=*&active=eq.true&order=sort.asc,created_at.desc").then(rows=>{P=rows.map(fromRow);LOADING=false;renderGrid()})
     .catch(()=>{P=[];LOADING=false;LOADERR=true;renderGrid()});
 }
