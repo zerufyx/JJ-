@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>JJTECH_73 · Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Panel: login → pestañas Productos / Ajustes → editor en hoja completa */
+:root{
+  --bg:#07090f; --panel:#0f1320; --panel-2:#151b2c; --line:#222a3d; --fg:#eef1f7; --muted:#8b95ab;
+  --gold:#ffc61a; --gold-2:#e0a100; --blue:#1f6bff; --red:#ff5a5f; --green:#08c84c;
+  --display:"Saira Condensed","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{margin:0;font-family:var(--body);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px}
+.brand{font-family:var(--display);font-weight:800;font-style:italic;letter-spacing:.02em;color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 16px;border-radius:12px;font-weight:700;text-decoration:none;background:var(--panel-2);border:1px solid var(--line);color:var(--fg)}
+.btn.gold{background:linear-gradient(#ffe29a,#dca24b);color:#1a1200;border:0}
+.btn.blue{background:linear-gradient(#2794ff,#0052c9);color:#fff;border:0}
+.btn.danger{background:transparent;border-color:rgba(255,90,95,.5);color:var(--red)}
+.btn[disabled]{opacity:.55;cursor:default}
+label.f{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14px}
+label.f small{color:var(--muted);font-weight:500}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=search],select,textarea{width:100%;padding:12px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--fg);font-size:16px}
+textarea{min-height:90px;resize:vertical}
+.msg{min-height:20px;font-size:14px;color:var(--red)}
+.msg.ok{color:var(--green)}
+[hidden]{display:none!important}
+
+/* LOGIN */
+#login{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+#login form{width:min(100%,380px);display:flex;flex-direction:column;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+#login h1{margin:0;font-size:36px;line-height:1}
+#login p{margin:0;color:var(--muted)}
+
+/* APP */
+.top{position:sticky;top:0;z-index:10;background:rgba(7,9,15,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.top .wrap{display:flex;align-items:center;gap:10px;padding-block:12px}
+.top .brand{font-size:26px;margin-right:auto}
+.top .brand span{color:var(--fg);font-style:normal;font-weight:600;font-size:16px;margin-left:6px}
+.top a,.top button{font-size:14px;color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:8px}
+.tabs{display:flex;gap:6px;padding-block:12px 4px}
+.tabs button{flex:1;padding:11px;border-radius:10px;background:var(--panel);border:1px solid var(--line);font-weight:700;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--gold);color:#1a1200;border-color:var(--gold)}
+.stats{display:flex;gap:8px;padding-block:10px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+.stats b{color:var(--fg);font-variant-numeric:tabular-nums}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-bottom:8px}
+.bar input{flex:1;min-width:160px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+.chips button{flex:none;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13px;color:var(--muted)}
+.chips button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.list{display:flex;flex-direction:column;gap:8px;padding-bottom:40px}
+.row{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px}
+.row.off{opacity:.55}
+.row img{width:68px;height:68px;border-radius:10px;object-fit:cover;flex:none;background:var(--panel-2)}
+.row .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.row .info b{font-size:15px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .info small{color:var(--muted);font-size:13px}
+.flags{display:flex;gap:6px;margin-top:3px;flex-wrap:wrap}
+.flags button{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line);color:var(--muted)}
+.flags button[data-f="active"][aria-pressed="true"]{background:rgba(8,200,76,.15);border-color:rgba(8,200,76,.5);color:var(--green)}
+.flags button[data-f="sold"][aria-pressed="true"]{background:rgba(255,90,95,.15);border-color:rgba(255,90,95,.5);color:var(--red)}
+.ops{display:flex;flex-direction:column;gap:4px;align-items:stretch}
+.ops .mv{display:flex;gap:4px}
+.ops button{padding:7px 9px;border-radius:8px;background:var(--panel-2);border:1px solid var(--line);font-weight:700;font-size:13px}
+.ops button[disabled]{opacity:.3}
+.empty{text-align:center;color:var(--muted);padding:40px 12px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.empty b{color:var(--fg);font-size:18px}
+.settings{display:flex;flex-direction:column;gap:14px;padding-block:14px 40px;max-width:460px}
+
+/* EDITOR */
+#editor{position:fixed;inset:0;z-index:30;background:var(--bg);overflow:auto;padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+#editor .head{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+#editor .head .wrap{display:flex;align-items:center;justify-content:space-between;padding-block:12px}
+#editor h2{margin:0;font-family:var(--display);font-size:26px;text-transform:uppercase}
+#editor form{display:flex;flex-direction:column;gap:16px;padding-block:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two>*{min-width:0}
+.checks{display:flex;gap:10px;flex-wrap:wrap}
+.checks label{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:var(--panel);border:1px solid var(--line);font-weight:600}
+.checks input{width:20px;height:20px;accent-color:var(--gold)}
+.photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(min-width:560px){.photos{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--panel-2);border:1px solid var(--line)}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph .cover{position:absolute;top:6px;left:6px;background:var(--gold);color:#1a1200;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px}
+.ph .pops{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:16px 4px 4px}
+.ph .pops button{width:30px;height:30px;border-radius:8px;background:rgba(0,0,0,.6);color:#fff;font-weight:700}
+.addph{aspect-ratio:1;border-radius:10px;border:2px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-weight:700;cursor:pointer;text-align:center;font-size:13px}
+.addph b{font-size:28px;color:var(--gold);line-height:1}
+.foot{position:fixed;z-index:31;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px))}
+.foot .wrap{display:flex;gap:10px}
+.foot .btn{flex:1}
+.toast{position:fixed;z-index:50;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--fg);color:var(--bg);padding:11px 18px;border-radius:999px;font-weight:700;transition:.25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast.err{background:var(--red);color:#fff}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="login" hidden>
+  <form id="loginForm" novalidate>
+    <h1 class="brand">JJTECH_73</h1>
+    <p>Panel de administración del catálogo.</p>
+    <label class="f">Correo<input id="email" type="email" autocomplete="username" required></label>
+    <label class="f">Contraseña<input id="pass" type="password" autocomplete="current-password" required></label>
+    <button class="btn gold" id="loginBtn" type="submit">Entrar</button>
+    <div class="msg" id="loginMsg" role="alert"></div>
+  </form>
+</section>
+
+<!-- APP -->
+<section id="app" hidden>
+  <header class="top"><div class="wrap">
+    <div class="brand">JJTECH_73<span>Panel</span></div>
+    <a href="./" target="_blank" rel="noopener">Ver catálogo ↗</a>
+    <button id="logout">Salir</button>
+  </div></header>
+  <div class="wrap">
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="prod">Productos</button>
+      <button role="tab" aria-selected="false" data-tab="set">Ajustes</button>
+    </div>
+
+    <div id="tab-prod">
+      <div class="stats" id="stats"></div>
+      <div class="bar"><button class="btn gold" id="newBtn">+ Nuevo producto</button><input id="search" type="search" placeholder="Buscar por nombre" aria-label="Buscar por nombre"></div>
+      <div class="chips" id="chips"></div>
+      <div class="list" id="list"></div>
+    </div>
+
+    <div id="tab-set" hidden>
+      <form class="settings" id="setForm">
+        <label class="f">WhatsApp<small>Con el 1 adelante, solo números. Ej: 19543093806</small><input id="sWa" type="text" inputmode="numeric" required></label>
+        <label class="f">Usuario de Instagram<small>Sin @. Ej: jjtech_73</small><input id="sIg" type="text"></label>
+        <label class="f">Usuario de TikTok<small>Sin @. Ej: jjtech_73</small><input id="sTt" type="text"></label>
+        <button class="btn gold" type="submit">Guardar ajustes</button>
+        <div class="msg" id="setMsg" role="status"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- EDITOR -->
+<section id="editor" hidden aria-modal="true" role="dialog" aria-labelledby="edTitle">
+  <div class="head"><div class="wrap"><h2 id="edTitle">Nuevo producto</h2><button class="btn" id="edClose" type="button">Cerrar</button></div></div>
+  <div class="wrap">
+    <form id="edForm" novalidate>
+      <div>
+        <div class="f" style="margin-bottom:8px;font-weight:600">Fotos <small style="color:var(--muted);font-weight:500">La primera es la portada.</small></div>
+        <div class="photos" id="photos"></div>
+        <input id="fileIn" type="file" accept="image/*" multiple hidden>
+      </div>
+      <label class="f">Nombre<input id="fName" type="text" maxlength="90" required placeholder="Ej: Reloj de Caballero Dorado 40mm"></label>
+      <div class="two">
+        <label class="f">Categoría<select id="fCat">
+          <option value="relojes">Relojes</option><option value="calzado">Calzado</option><option value="tecnologia">Tecnología</option><option value="accesorios">Accesorios</option>
+        </select></label>
+        <label class="f">Precio<small>Vacío = "Consultar"</small><input id="fPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Consultar"></label>
+      </div>
+      <div class="two">
+        <label class="f">Etiqueta<select id="fBadge">
+          <option value="">Sin etiqueta</option><option>Exclusivo</option><option>Nuevo</option><option>Deportivo</option><option>Oferta</option><option>Últimas piezas</option>
+        </select></label>
+        <label class="f">Tallas<small>Separadas por coma</small><input id="fSizes" type="text" placeholder="7,8,9,10"></label>
+      </div>
+      <label class="f">Descripción<textarea id="fDesc" maxlength="600" placeholder="Material, color, medida, qué incluye…"></textarea></label>
+      <div class="checks">
+        <label><input id="fActive" type="checkbox" checked> Visible en el catálogo</label>
+        <label><input id="fSold" type="checkbox"> Vendido</label>
+      </div>
+      <button class="btn danger" id="delBtn" type="button" hidden>Borrar este producto</button>
+      <div class="msg" id="edMsg" role="alert"></div>
+    </form>
+  </div>
+  <div class="foot"><div class="wrap"><button class="btn" id="edCancel" type="button">Cancelar</button><button class="btn gold" id="saveBtn" type="button">Guardar</button></div></div>
+</section>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const CFG=window.JJ_CONFIG||{};
+const BUCKET="jj-products";
+const CATS={relojes:"Relojes",calzado:"Calzado",tecnologia:"Tecnología",accesorios:"Accesorios"};
+const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const money=n=>"$"+Number(n).toLocaleString("en-US",{maximumFractionDigits:2});
+let sb=null,items=[],fcat="todos",fq="",ed=null,photos=[],busy=false;
+const DEMO=[
+ {id:1,c:"relojes",n:"Reloj de Caballero Dorado 36mm",b:"Exclusivo",img:"datejust",d:"Dorado, esfera azul con brillantes, brazalete tipo jubileo. Incluye caja."},
+ {id:2,c:"relojes",n:"Reloj de Caballero Bicolor 41mm",b:"Exclusivo",img:"submariner",d:"Acero y oro, esfera negra, bisel giratorio. Incluye caja."},
+ {id:3,c:"relojes",n:"Reloj Deportivo Cronógrafo 44mm · Naranja",b:"Deportivo",img:"alonso-naranja",d:"3 piñones, bisel giratorio, funcionamiento impecable. Listo para la entrega."},
+ {id:4,c:"relojes",n:"Reloj Deportivo Cronógrafo 44mm · Rojo",b:"Deportivo",img:"alonso-rojo",d:"3 piñones, bisel giratorio, funcionamiento impecable. Listo para la entrega."},
+ {id:5,c:"relojes",n:"Reloj Deportivo Cronógrafo 44mm · Blanco",b:"Deportivo",img:"alonso-blanco",d:"3 piñones, bisel giratorio, brazalete de acero. Listo para la entrega."},
+ {id:6,c:"relojes",n:"Reloj Cronógrafo Azul Acero",img:"p6",d:"Esfera azul, bisel dorado y brazalete de acero."},
+ {id:7,c:"relojes",n:"Reloj Cronógrafo Verde y Oro",b:"Nuevo",img:"p7",d:"Esfera verde, bisel y detalles dorados."},
+ {id:8,c:"relojes",n:"Reloj Cronógrafo Dorado y Negro",img:"p8",d:"Brazalete dorado con esfera y bisel negros."},
+ {id:9,c:"relojes",n:"Reloj Cronógrafo Blanco y Oro",img:"p9",d:"Esfera blanca con numeración romana y brazalete bicolor."},
+ {id:10,c:"calzado",n:"Tenis Blanco y Negro Dorado",b:"Nuevo",img:"cat-calzado",sizes:["7","8","9","10","11","12"],d:"Estilo clásico en blanco y negro con detalle dorado."},
+ {id:11,c:"tecnologia",n:"Smartphone y Audífonos Inalámbricos",img:"cat-tecnologia",d:"Smartphone, audífonos inalámbricos y audífonos de diadema."},
+ {id:12,c:"accesorios",n:"Gafas de Sol Azul Espejo",img:"cat-accesorios",d:"Lentes azul espejo con montura negra y detalles dorados."},
+ {id:13,c:"accesorios",n:"Gafas de Sol Negras",img:"p10",d:"Montura negra con detalle dorado, lente oscuro."}
+];
+
+function toast(t,err){const e=$("#toast");e.textContent=t;e.classList.toggle("err",!!err);e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),err?4200:2200)}
+function show(id){["#login","#app"].forEach(s=>$(s).hidden=s!==id)}
+
+// ---------- arranque ----------
+if(!CFG.url||!CFG.anonKey||!window.supabase){
+  show("#login");$("#loginForm").querySelectorAll("input,button").forEach(e=>e.disabled=true);
+  $("#loginMsg").textContent=!window.supabase?"No cargó la conexión. Revisa tu internet y recarga.":"Falta configurar config.js con la URL y la anon key de Supabase.";
+}else{
+  sb=supabase.createClient(CFG.url,CFG.anonKey);
+  sb.auth.getSession().then(({data})=>data.session?enter():show("#login"));
+}
+
+$("#loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();const m=$("#loginMsg");m.textContent="";
+  const email=$("#email").value.trim(),password=$("#pass").value;
+  if(!email||!password){m.textContent="Escribe tu correo y tu contraseña.";return}
+  $("#loginBtn").disabled=true;$("#loginBtn").textContent="Entrando…";
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  $("#loginBtn").disabled=false;$("#loginBtn").textContent="Entrar";
+  if(error){m.textContent=/confirm/i.test(error.message)?"Ese correo no está confirmado. En Supabase, confirma el usuario.":"Correo o contraseña incorrectos.";return}
+  enter();
+});
+
+async function enter(){
+  const {data:{user}}=await sb.auth.getUser();
+  if(!user){show("#login");return}
+  const {data,error}=await sb.from("jj_admins").select("user_id").eq("user_id",user.id).maybeSingle();
+  if(error||!data){await sb.auth.signOut();show("#login");$("#loginMsg").textContent="Esta cuenta no tiene permiso de administrador.";return}
+  show("#app");loadProducts();loadSettings();
+}
+$("#logout").onclick=async()=>{await sb.auth.signOut();show("#login")};
+
+// ---------- pestañas ----------
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-tab]").forEach(x=>x.setAttribute("aria-selected",x===b));
+  $("#tab-prod").hidden=b.dataset.tab!=="prod";$("#tab-set").hidden=b.dataset.tab!=="set";
+});
+
+// ---------- productos ----------
+async function loadProducts(){
+  $("#list").innerHTML=`<div class="empty">Cargando…</div>`;
+  const {data,error}=await sb.from("jj_products").select("*").order("sort",{ascending:true}).order("created_at",{ascending:false});
+  if(error){$("#list").innerHTML=`<div class="empty"><b>No se pudieron cargar los productos.</b>${esc(error.message)}<br>¿Corriste el archivo jjtech73.sql en Supabase?</div>`;return}
+  items=data||[];render();
+}
+function render(){
+  const vis=items.filter(x=>x.active).length,sold=items.filter(x=>x.sold).length;
+  $("#stats").innerHTML=`<span><b>${items.length}</b> productos</span>·<span><b>${vis}</b> visibles</span>·<span><b>${sold}</b> vendidos</span>`;
+  $("#chips").innerHTML=[["todos","Todos"],...Object.entries(CATS)].map(([k,l])=>`<button aria-pressed="${k===fcat}" data-c="${k}">${l} (${k==="todos"?items.length:items.filter(x=>x.category===k).length})</button>`).join("");
+  if(!items.length){
+    $("#list").innerHTML=`<div class="empty"><b>Todavía no hay productos.</b>Puedes cargar los ${DEMO.length} productos de la maqueta para empezar, o crear el primero.<button class="btn blue" id="importBtn">Cargar los ${DEMO.length} productos de la maqueta</button></div>`;
+    $("#importBtn").onclick=importDemo;return;
+  }
+  const filtering=fcat!=="todos"||fq;
+  const list=items.filter(x=>(fcat==="todos"||x.category===fcat)&&x.name.toLowerCase().includes(fq.toLowerCase()));
+  $("#list").innerHTML=list.length?list.map(x=>{const i=items.indexOf(x);return `<div class="row${x.active?"":" off"}">
+    <img src="${esc(x.images[0]||"")}" alt="" loading="lazy">
+    <div class="info"><b>${esc(x.name)}</b><small>${CATS[x.category]||x.category} · ${x.price!=null?money(x.price):"Consultar"}${x.badge?" · "+esc(x.badge):""}</small>
+      <div class="flags"><button data-f="active" data-id="${x.id}" aria-pressed="${x.active}">${x.active?"Visible":"Oculto"}</button><button data-f="sold" data-id="${x.id}" aria-pressed="${x.sold}">${x.sold?"Vendido":"Disponible"}</button></div></div>
+    <div class="ops"><button data-edit="${x.id}">Editar</button><div class="mv"><button data-mv="-1" data-id="${x.id}" aria-label="Subir" ${filtering||i===0?"disabled":""}>↑</button><button data-mv="1" data-id="${x.id}" aria-label="Bajar" ${filtering||i===items.length-1?"disabled":""}>↓</button></div></div>
+  </div>`}).join(""):`<div class="empty">No hay productos con ese filtro.</div>`;
+}
+$("#chips").onclick=e=>{const b=e.target.closest("[data-c]");if(!b)return;fcat=b.dataset.c;render()};
+$("#search").oninput=e=>{fq=e.target.value.trim();render()};
+$("#list").onclick=async e=>{
+  const f=e.target.closest("[data-f]"),mv=e.target.closest("[data-mv]"),edb=e.target.closest("[data-edit]");
+  if(edb){openEditor(items.find(x=>x.id==edb.dataset.edit));return}
+  if(f&&!busy){const x=items.find(y=>y.id==f.dataset.id),k=f.dataset.f,v=!x[k];busy=true;
+    const {error}=await sb.from("jj_products").update({[k]:v,updated_at:new Date().toISOString()}).eq("id",x.id);busy=false;
+    if(error){toast("No se pudo guardar: "+error.message,true);return}
+    x[k]=v;render();toast(k==="active"?(v?"Visible en el catálogo":"Oculto del catálogo"):(v?"Marcado como vendido":"Disponible otra vez"));return}
+  if(mv&&!busy){const i=items.findIndex(y=>y.id==mv.dataset.id),j=i+(+mv.dataset.mv);if(j<0||j>=items.length)return;
+    const order=items.slice();[order[i],order[j]]=[order[j],order[i]];await saveOrder(order)}
+};
+async function saveOrder(order){
+  busy=true;const ups=[];
+  order.forEach((x,k)=>{const s=k*10;if(x.sort!==s){ups.push(sb.from("jj_products").update({sort:s}).eq("id",x.id).then(r=>{if(!r.error)x.sort=s;return r}))}});
+  const res=await Promise.all(ups);busy=false;
+  if(res.some(r=>r.error)){toast("No se pudo cambiar el orden.",true);loadProducts();return}
+  items=order;render();
+}
+
+// ---------- fotos ----------
+function compress(src,max=1400,q=.85){return new Promise((ok,bad)=>{
+  const url=typeof src==="string"?src:URL.createObjectURL(src);const im=new Image();
+  im.onload=()=>{const k=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));const c=document.createElement("canvas");
+    c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);
+    if(typeof src!=="string")URL.revokeObjectURL(url);c.toBlob(b=>b?ok(b):bad(new Error("foto")),"image/jpeg",q)};
+  im.onerror=()=>bad(new Error("foto"));im.src=url})}
+async function upload(blob){
+  const path=`p/${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;
+  const {error}=await sb.storage.from(BUCKET).upload(path,blob,{contentType:"image/jpeg",cacheControl:"31536000",upsert:false});
+  if(error)throw error;return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+const pathOf=u=>{const m=String(u).split(`/object/public/${BUCKET}/`)[1];return m?decodeURIComponent(m.split("?")[0]):null};
+function renderPhotos(){
+  $("#photos").innerHTML=photos.map((p,i)=>`<div class="ph"><img src="${esc(p.preview||p.url)}" alt="">${i===0?`<span class="cover">Portada</span>`:""}
+    <div class="pops"><button type="button" data-pm="-1" data-i="${i}" aria-label="Mover a la izquierda" ${i===0?"disabled":""}>‹</button><button type="button" data-px="${i}" aria-label="Quitar foto">×</button><button type="button" data-pm="1" data-i="${i}" aria-label="Mover a la derecha" ${i===photos.length-1?"disabled":""}>›</button></div></div>`).join("")
+    +`<label class="addph" for="fileIn"><b>+</b>${photos.length?"Agregar fotos":"Agregar fotos"}</label>`;
+}
+$("#photos").onclick=e=>{const m=e.target.closest("[data-pm]"),x=e.target.closest("[data-px]");
+  if(m){const i=+m.dataset.i,j=i+(+m.dataset.pm);[photos[i],photos[j]]=[photos[j],photos[i]];renderPhotos()}
+  if(x){const p=photos.splice(+x.dataset.px,1)[0];if(p.preview)URL.revokeObjectURL(p.preview);renderPhotos()}};
+$("#fileIn").onchange=async e=>{
+  const files=[...e.target.files];e.target.value="";
+  for(const f of files){try{const b=await compress(f);photos.push({blob:b,preview:URL.createObjectURL(b)})}catch{toast("No se pudo leer una foto. Usa JPG o PNG.",true)}}
+  renderPhotos();
+};
+
+// ---------- editor ----------
+function openEditor(x){
+  ed=x||null;$("#edTitle").textContent=x?"Editar producto":"Nuevo producto";$("#edMsg").textContent="";
+  $("#fName").value=x?.name||"";$("#fCat").value=x?.category||(fcat!=="todos"?fcat:"relojes");$("#fPrice").value=x?.price??"";
+  const bs=$("#fBadge");if(x?.badge&&![...bs.options].some(o=>o.value===x.badge)){bs.add(new Option(x.badge,x.badge))}bs.value=x?.badge||"";
+  $("#fSizes").value=x?.sizes||"";$("#fDesc").value=x?.description||"";$("#fActive").checked=x?x.active:true;$("#fSold").checked=x?x.sold:false;
+  photos=(x?.images||[]).map(u=>({url:u}));renderPhotos();
+  $("#delBtn").hidden=!x;$("#editor").hidden=false;document.body.style.overflow="hidden";$("#editor").scrollTop=0;
+}
+function closeEditor(){photos.forEach(p=>p.preview&&URL.revokeObjectURL(p.preview));$("#editor").hidden=true;document.body.style.overflow="";ed=null}
+$("#newBtn").onclick=()=>openEditor(null);
+$("#edClose").onclick=closeEditor;$("#edCancel").onclick=closeEditor;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#editor").hidden)closeEditor()});
+
+$("#saveBtn").onclick=async()=>{
+  if(busy)return;const m=$("#edMsg");m.textContent="";
+  const name=$("#fName").value.trim();
+  if(!name){m.textContent="Escribe el nombre del producto.";$("#fName").focus();return}
+  if(!photos.length){m.textContent="Agrega al menos una foto.";return}
+  const pr=$("#fPrice").value.trim();if(pr&&!(+pr>=0)){m.textContent="El precio debe ser un número. Déjalo vacío para \"Consultar\".";return}
+  busy=true;const btn=$("#saveBtn");btn.disabled=true;
+  try{
+    const urls=[];let n=0;const total=photos.filter(p=>p.blob).length;
+    for(const p of photos){if(p.blob){btn.textContent=`Subiendo foto ${++n} de ${total}…`;p.url=await upload(p.blob);delete p.blob}urls.push(p.url)}
+    btn.textContent="Guardando…";
+    const row={name,category:$("#fCat").value,price:pr===""?null:+pr,badge:$("#fBadge").value,
+      sizes:$("#fSizes").value.split(",").map(s=>s.trim()).filter(Boolean).join(","),description:$("#fDesc").value.trim(),
+      images:urls,active:$("#fActive").checked,sold:$("#fSold").checked,updated_at:new Date().toISOString()};
+    let res;
+    if(ed){res=await sb.from("jj_products").update(row).eq("id",ed.id).select().single()}
+    else{row.sort=items.length?Math.min(...items.map(x=>x.sort))-10:0;res=await sb.from("jj_products").insert(row).select().single()}
+    if(res.error)throw res.error;
+    if(ed){const gone=(ed.images||[]).filter(u=>!urls.includes(u)).map(pathOf).filter(Boolean);if(gone.length)sb.storage.from(BUCKET).remove(gone)}
+    const was=!!ed;closeEditor();await loadProducts();toast(was?"Cambios guardados":"Producto agregado");
+  }catch(err){m.textContent="No se pudo guardar: "+(err.message||err)}
+  finally{busy=false;btn.disabled=false;btn.textContent="Guardar"}
+};
+$("#delBtn").onclick=async()=>{
+  if(!ed||busy)return;
+  if(!confirm(`¿Borrar "${ed.name}"? Esta acción no se puede deshacer.`))return;
+  busy=true;const {error}=await sb.from("jj_products").delete().eq("id",ed.id);busy=false;
+  if(error){$("#edMsg").textContent="No se pudo borrar: "+error.message;return}
+  const paths=(ed.images||[]).map(pathOf).filter(Boolean);if(paths.length)sb.storage.from(BUCKET).remove(paths);
+  closeEditor();await loadProducts();toast("Producto borrado");
+};
+
+// ---------- cargar los productos de la maqueta ----------
+async function importDemo(){
+  const b=$("#importBtn");b.disabled=true;b.textContent="Leyendo las fotos del catálogo…";
+  try{
+    const html=await (await fetch("./index.html",{cache:"no-store"})).text();
+    const m=html.match(/const IMG=(\{.*?\});\s*\n/s);if(!m)throw new Error("no encontré las fotos en index.html");
+    const IMG=JSON.parse(m[1]);
+    for(let k=0;k<DEMO.length;k++){const x=DEMO[k];b.textContent=`Subiendo ${k+1} de ${DEMO.length}…`;
+      const blob=await compress(IMG[x.img]);const url=await upload(blob);
+      const {error}=await sb.from("jj_products").insert({name:x.n,category:x.c,description:x.d||"",badge:x.b||"",sizes:(x.sizes||[]).join(","),images:[url],sort:k*10,active:true,sold:false});
+      if(error)throw error}
+    toast("Listo, productos cargados");await loadProducts();
+  }catch(err){toast("No se pudo cargar: "+(err.message||err),true);b.disabled=false;b.textContent=`Cargar los ${DEMO.length} productos de la maqueta`}
+}
+
+// ---------- ajustes ----------
+async function loadSettings(){
+  const {data}=await sb.from("jj_settings").select("*").eq("id",1).maybeSingle();
+  if(data){$("#sWa").value=data.whatsapp||"";$("#sIg").value=data.instagram||"";$("#sTt").value=data.tiktok||""}
+}
+$("#setForm").addEventListener("submit",async e=>{
+  e.preventDefault();const m=$("#setMsg");m.className="msg";m.textContent="";
+  let wa=$("#sWa").value.replace(/\D/g,"");if(wa.length===10)wa="1"+wa;
+  if(wa.length<11){m.textContent="Escribe el WhatsApp completo, con el 1 adelante. Ej: 19543093806";return}
+  const {error}=await sb.from("jj_settings").update({whatsapp:wa,instagram:$("#sIg").value.trim().replace(/^@/,""),tiktok:$("#sTt").value.trim().replace(/^@/,""),updated_at:new Date().toISOString()}).eq("id",1);
+  if(error){m.textContent="No se pudo guardar: "+error.message;return}
+  $("#sWa").value=wa;m.className="msg ok";m.textContent="Ajustes guardados. El catálogo ya usa estos datos.";
+});
+</script>
+</body>
+</html>
